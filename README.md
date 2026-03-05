@@ -576,6 +576,15 @@ python -c "from qiskit_ibm_runtime import QiskitRuntimeService; QiskitRuntimeSer
 - Check job ID format (should be alphanumeric string)
 - Ensure job belongs to your IBM Quantum account
 
+## 🔗 Related Repositories
+
+This agent is part of the Quantum Computing Multi-Agent System. Here are the related repositories:
+
+- **[Quantum Computing Agent](https://github.ibm.com/Edgar-Castaneda/quantum-computing-agent)** - Circuit execution specialist
+- **[Quantum Status Agent](https://github.ibm.com/Edgar-Castaneda/quantum-status-agent)** - Status monitoring and job tracking (this repository)
+- **[Quantum Developer Agent](https://github.ibm.com/Edgar-Castaneda/quantum-developer-agent)** - Code generation and algorithm implementation
+- **[Quantum Operations Agent](https://github.ibm.com/Edgar-Castaneda/quantum-lab-agent)** - Main orchestrator coordinating all agents
+
 ## 📚 Additional Resources
 
 - [IBM Quantum Documentation](https://docs.quantum.ibm.com/)
