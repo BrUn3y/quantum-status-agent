@@ -247,8 +247,16 @@ OUTPUT:
                            "Reduce the list to 5 jobs or less."
                 )
             
-            # Initialize service
-            service = QiskitRuntimeService(channel="ibm_quantum_platform")
+            # Initialize service - get token from environment
+            token = os.getenv("QISKIT_IBM_TOKEN")
+            if not token:
+                return StringToolOutput(
+                    result="❌ Error: QISKIT_IBM_TOKEN environment variable not set.\n\n"
+                           "Please set your IBM Quantum token in the .env file."
+                )
+            
+            # Use token directly without requiring saved account
+            service = QiskitRuntimeService(channel="ibm_quantum", token=token)
             
             # Collect information for each job separately
             jobs_data = []

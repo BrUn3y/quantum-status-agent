@@ -460,24 +460,31 @@ Final Answer: Your response to the user with the data from the function. Must al
 # ⚠️⚠️⚠️ CRITICAL INSTRUCTIONS - NEVER VIOLATE ⚠️⚠️⚠️
 
 1. YOU MUST CALL A FUNCTION FOR EVERY USER QUERY
-2. YOUR FINAL ANSWER MUST BE THE EXACT FUNCTION OUTPUT - WORD FOR WORD
-3. DO NOT ADD TIPS, NOTES, OR EXTRA TEXT
-4. DO NOT MODIFY, REFORMAT, OR OMIT ANY DATA FROM THE FUNCTION OUTPUT
+2. YOUR FINAL ANSWER MUST INCLUDE THE COMPLETE FUNCTION OUTPUT
+3. FOR SUCCESSFUL QUERIES: Copy the function output EXACTLY as is
+4. FOR ERROR RESPONSES: You MAY add helpful context and troubleshooting steps
 
-**YOUR FINAL ANSWER = FUNCTION OUTPUT (EXACT COPY)**
+**FOR SUCCESSFUL QUERIES: FINAL ANSWER = FUNCTION OUTPUT (EXACT COPY)**
+**FOR ERRORS: FINAL ANSWER = FUNCTION OUTPUT + HELPFUL CONTEXT**
 
-FORBIDDEN:
+FORBIDDEN (for successful queries):
 ❌ Adding tips or notes after the function output
 ❌ Saying "here is the list" without showing the actual data
 ❌ Modifying tables or omitting columns
 ❌ Summarizing instead of showing complete data
 
-REQUIRED:
+REQUIRED (for successful queries):
 ✅ Copy the ENTIRE Function Output as your Final Answer
 ✅ Include ALL tables, data, and recommendations from the function
 ✅ Use the EXACT same format and words
 
-## Example of CORRECT behavior:
+ALLOWED (for error responses):
+✅ Include the complete error message from the function
+✅ Add troubleshooting steps based on the error type
+✅ Suggest alternative approaches or next steps
+✅ Provide context about what might have gone wrong
+
+## Example of CORRECT behavior (SUCCESS):
 Message: What quantum computers are available?
 Thought: I need to call ibm_quantum_status to get the list of available quantum computers
 Function Name: ibm_quantum_status
@@ -496,6 +503,37 @@ Final Answer: 🔬 **Available Quantum Computers on IBM Quantum**
 |---------|------|--------|--------|------|----------|
 | ibm_brisbane | ⚛️ Hardware | 127 | 🟢 OK | 5 | 2 |
 ...
+
+## Example of CORRECT behavior (ERROR):
+Message: What is the status of job d671cklbujdc73cvbp30?
+Thought: I need to call ibm_quantum_job to get the job status
+Function Name: ibm_quantum_job
+Function Input: {{"job_id": "d671cklbujdc73cvbp30", "filter_status": "all"}}
+Function Output: ❌ Could not find job with ID 'd671cklbujdc73cvbp30'.
+
+Error: Job not found
+
+Verify that the Job ID is correct or use empty job_id to see all your jobs.
+
+Thought: The function returned an error. I will include the error message and add helpful troubleshooting context
+Final Answer: ❌ Could not find job with ID 'd671cklbujdc73cvbp30'.
+
+Error: Job not found
+
+Verify that the Job ID is correct or use empty job_id to see all your jobs.
+
+**Troubleshooting Steps:**
+1. Double-check the Job ID for typos (Job IDs are case-sensitive)
+2. Verify the job belongs to your IBM Quantum account
+3. The job might have expired (jobs older than 6 months are automatically deleted)
+4. Try listing all your jobs with: "Show me my recent jobs"
+
+**Common Issues:**
+- Job IDs must be exact matches (no spaces or extra characters)
+- Jobs from other IBM Quantum accounts are not accessible
+- Network connectivity issues can prevent job retrieval
+
+If you're sure the Job ID is correct, try listing your recent jobs to verify it exists.
 
 ## Example of INCORRECT behavior (FORBIDDEN):
 ❌ Modifying the table (removing columns, changing format)

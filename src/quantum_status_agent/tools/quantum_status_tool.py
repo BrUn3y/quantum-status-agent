@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from qiskit_ibm_runtime import QiskitRuntimeService
 from typing import Optional
 import traceback
+import os
 
 class QuantumStatusInput(BaseModel):
     """Input schema for quantum status tool - no parameters needed"""
@@ -41,9 +42,17 @@ class IBMQuantumStatusTool(Tool[QuantumStatusInput]):
     ) -> StringToolOutput:
         """Check available quantum computers and their queue status."""
         try:
-            # Initialize service - without specifying instance, uses saved one
+            # Initialize service - get token from environment
             print("[IBMQuantumStatusTool] Initializing IBM Quantum service...")
-            service = QiskitRuntimeService(channel="ibm_quantum_platform")
+            token = os.getenv("QISKIT_IBM_TOKEN")
+            if not token:
+                return StringToolOutput(
+                    result="❌ Error: QISKIT_IBM_TOKEN environment variable not set.\n\n"
+                           "Please set your IBM Quantum token in the .env file."
+                )
+            
+            # Use token directly without requiring saved account
+            service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
             
             # Get all available backends
             # If only_hardware=False (default), searches for ALL (hardware + simulators)

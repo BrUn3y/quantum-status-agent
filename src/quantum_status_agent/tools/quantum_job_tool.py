@@ -181,8 +181,16 @@ EXAMPLES:
     ) -> StringToolOutput:
         """Check quantum job status and retrieve results."""
         try:
-            # Initialize service - uses saved instance
-            service = QiskitRuntimeService(channel="ibm_quantum_platform")
+            # Initialize service - get token from environment
+            token = os.getenv("QISKIT_IBM_TOKEN")
+            if not token:
+                return StringToolOutput(
+                    result="❌ Error: QISKIT_IBM_TOKEN environment variable not set.\n\n"
+                           "Please set your IBM Quantum token in the .env file."
+                )
+            
+            # Use token directly without requiring saved account
+            service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
             
             if not input.job_id or input.job_id.lower() == "list":
                 # Show recent jobs with filter

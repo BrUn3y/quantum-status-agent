@@ -5,6 +5,7 @@ from beeai_framework.context import RunContext
 from pydantic import BaseModel, Field
 from qiskit_ibm_runtime import QiskitRuntimeService
 from typing import Optional
+import os
 
 class QuantumInfoInput(BaseModel):
     """Input schema for quantum computer detailed information"""
@@ -39,8 +40,16 @@ class IBMQuantumInfoTool(Tool[QuantumInfoInput]):
     ) -> StringToolOutput:
         """Get detailed information about a specific quantum computer."""
         try:
-            # Initialize service - uses saved instance
-            service = QiskitRuntimeService(channel="ibm_quantum_platform")
+            # Initialize service - get token from environment
+            token = os.getenv("QISKIT_IBM_TOKEN")
+            if not token:
+                return StringToolOutput(
+                    result="❌ Error: QISKIT_IBM_TOKEN environment variable not set.\n\n"
+                           "Please set your IBM Quantum token in the .env file."
+                )
+            
+            # Use token directly without requiring saved account
+            service = QiskitRuntimeService(channel="ibm_quantum", token=token)
             
             # Get specific backend
             try:
