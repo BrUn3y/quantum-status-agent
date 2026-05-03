@@ -286,7 +286,7 @@ STATUS_AGENT_SKILLS = [
         tags=["Quantum Computing", "IBM Quantum", "Backend Info", "Technical Details"],
         examples=[
             "Give me detailed information about ibm_brisbane",
-            "What are the properties of ibm_torino?",
+            "What are the properties of ibm_kingston?",
             "How many qubits does ibm_kyiv have?",
             "Show me the error rates of ibm_sherbrooke",
             "What is the topology of ibm_osaka?"

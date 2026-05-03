@@ -227,7 +227,7 @@ Gets detailed technical information about a specific backend.
 **Example Query:**
 ```
 "Give me detailed information about ibm_brisbane"
-"What are the properties of ibm_torino?"
+"What are the properties of ibm_kingston?"
 "How many qubits does ibm_kyiv have?"
 ```
 
