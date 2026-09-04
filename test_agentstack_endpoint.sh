@@ -1,48 +1,36 @@
 #!/bin/bash
 
-# Script para probar los endpoints correctos de AgentStack
+# Script para probar los endpoints reales del AgentStack A2A server
+# (agent card + JSON-RPC message/send en /jsonrpc/)
+
+PORT="${STATUS_PORT:-8002}"
+HOST="${STATUS_HOST:-localhost}"
 
 echo "=========================================="
-echo "🧪 Probando endpoints de AgentStack"
+echo "🧪 Probando endpoints de AgentStack (puerto $PORT)"
 echo "=========================================="
 echo ""
 
-# 1. Verificar health endpoint
-echo "1️⃣ Probando /health..."
-curl -s http://localhost:8002/health | jq '.' 2>/dev/null || echo "No disponible"
+echo "1️⃣ Probando /.well-known/agent-card.json..."
+curl -s "http://$HOST:$PORT/.well-known/agent-card.json" | jq '.' 2>/dev/null || echo "No disponible"
 echo ""
 
-# 2. Listar agentes disponibles
-echo "2️⃣ Probando /agents (lista de agentes)..."
-curl -s http://localhost:8002/agents | jq '.' 2>/dev/null || echo "No disponible"
-echo ""
-
-# 3. Probar endpoint A2A (Agent-to-Agent)
-echo "3️⃣ Probando endpoint A2A /a2a/..."
-curl -s -X POST http://localhost:8002/a2a/quantum_status_agent \
+echo "2️⃣ Probando JSON-RPC message/send en /jsonrpc/..."
+curl -s -X POST "http://$HOST:$PORT/jsonrpc/" \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
-      {
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "message/send",
+    "params": {
+      "message": {
+        "kind": "message",
+        "messageId": "11111111-1111-1111-1111-111111111111",
         "role": "user",
-        "content": "Muestra los resultados del job d7nu2dak4prs73dsold0"
+        "parts": [{"kind": "text", "text": "Muestra los resultados del job d7nu2dak4prs73dsold0"}]
       }
-    ]
+    }
   }' | jq '.' 2>/dev/null || echo "No disponible"
-echo ""
-
-# 4. Probar endpoint de chat directo
-echo "4️⃣ Probando /chat..."
-curl -s -X POST http://localhost:8002/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Muestra los resultados del job d7nu2dak4prs73dsold0"
-  }' | jq '.' 2>/dev/null || echo "No disponible"
-echo ""
-
-# 5. Listar todos los endpoints disponibles
-echo "5️⃣ Probando /openapi.json (documentación de API)..."
-curl -s http://localhost:8002/openapi.json | jq '.paths | keys' 2>/dev/null || echo "No disponible"
 echo ""
 
 echo "=========================================="

@@ -49,7 +49,7 @@ class IBMQuantumInfoTool(Tool[QuantumInfoInput]):
                 )
             
             # Use token directly without requiring saved account
-            service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+            service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
             
             # Get specific backend
             try:
@@ -212,8 +212,8 @@ class IBMQuantumInfoTool(Tool[QuantumInfoInput]):
             if hasattr(backend, 'target'):
                 try:
                     target = backend.target
-                    if target and hasattr(target, 'operations'):
-                        operations = list(target.operations)
+                    if target and hasattr(target, 'operation_names'):
+                        operations = list(target.operation_names)
                         result_text += "## 🎯 Supported Operations\n\n"
                         result_text += f"**Total operations:** {len(operations)}\n\n"
                         result_text += "**Available operations:** "

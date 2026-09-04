@@ -142,11 +142,11 @@ Edit `.env` with your credentials:
 
 ```bash
 # IBM Quantum Configuration
-IBM_QUANTUM_TOKEN=your_ibm_quantum_token_here
+QISKIT_IBM_TOKEN=your_ibm_quantum_token_here
 
 # IBM Watsonx Configuration
-WATSONX_URL=https://us-south.ml.cloud.ibm.com
-WATSONX_APIKEY=your_watsonx_api_key_here
+WATSONX_API_URL=https://us-south.ml.cloud.ibm.com/ml/v1/text/chat?version=2023-05-29
+WATSONX_API_KEY=your_watsonx_api_key_here
 WATSONX_PROJECT_ID=your_watsonx_project_id_here
 
 # Status Agent Model
@@ -534,9 +534,9 @@ mypy src/
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `IBM_QUANTUM_TOKEN` | IBM Quantum API token | Yes | - |
-| `WATSONX_URL` | Watsonx API endpoint | Yes | - |
-| `WATSONX_APIKEY` | Watsonx API key | Yes | - |
+| `QISKIT_IBM_TOKEN` | IBM Quantum API token | Yes | - |
+| `WATSONX_API_URL` | Watsonx API endpoint | Yes | - |
+| `WATSONX_API_KEY` | Watsonx API key | Yes | - |
 | `WATSONX_PROJECT_ID` | Watsonx project ID | Yes | - |
 | `WATSONX_STATUS_MODEL` | LLM model for agent | No | mistral-small-3-1-24b-instruct-2503 |
 | `STATUS_HOST` | Server host | No | 127.0.0.1 |
@@ -554,7 +554,7 @@ mypy src/
 ls -la .env
 
 # Verify all required variables are set
-cat .env | grep -E "IBM_QUANTUM_TOKEN|WATSONX_APIKEY|WATSONX_PROJECT_ID"
+cat .env | grep -E "QISKIT_IBM_TOKEN|WATSONX_API_KEY|WATSONX_PROJECT_ID"
 ```
 
 ### IBM Quantum connection errors
