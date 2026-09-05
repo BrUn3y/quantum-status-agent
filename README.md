@@ -581,10 +581,10 @@ python -c "from qiskit_ibm_runtime import QiskitRuntimeService; QiskitRuntimeSer
 
 This agent is part of the Quantum Computing Multi-Agent System. Here are the related repositories:
 
-- **[Quantum Computing Agent](https://github.ibm.com/Edgar-Castaneda/quantum-computing-agent)** - Circuit execution specialist
-- **[Quantum Status Agent](https://github.ibm.com/Edgar-Castaneda/quantum-status-agent)** - Status monitoring and job tracking (this repository)
-- **[Quantum Developer Agent](https://github.ibm.com/Edgar-Castaneda/quantum-developer-agent)** - Code generation and algorithm implementation
-- **[Quantum Operations Agent](https://github.ibm.com/Edgar-Castaneda/quantum-lab-agent)** - Main orchestrator coordinating all agents
+- **[Quantum Computing Agent](https://github.com/BrUn3y/quantum-computing-agent)** - Circuit execution specialist
+- **[Quantum Status Agent](https://github.com/BrUn3y/quantum-status-agent)** - Status monitoring and job tracking (this repository)
+- **[Quantum Developer Agent](https://github.com/BrUn3y/quantum-developer-agent)** - Code generation and algorithm implementation
+- **[Quantum Operations Agent](https://github.com/BrUn3y/quantum-lab-agent)** - Main orchestrator coordinating all agents
 
 ## 📚 Additional Resources
 
