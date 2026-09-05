@@ -4,7 +4,7 @@ Specialized agent for querying IBM Quantum backend status, technical information
 
 ## 🎯 Overview
 
-The Quantum Status Agent provides real-time IBM Quantum information using BeeAI with Granite 4 Small H through Ollama (`ollama:granite4:small-h`).
+The Quantum Status Agent provides real-time IBM Quantum information using BeeAI with Granite 4.2 8B through Ollama (`ollama:granite4.2:8b`).
 
 ### Key Features
 
@@ -22,7 +22,7 @@ The Quantum Status Agent provides real-time IBM Quantum information using BeeAI 
 │     Quantum Status Agent (Port 8002)    │
 │                                         │
 │  ┌───────────────────────────────────┐ │
-│  │   ReActAgent (Granite 4 Small H)  │ │
+│  │   ReActAgent (Granite 4.2 8B)  │ │
 │  │   - Reasoning & Acting Pattern    │ │
 │  │   - Tool Selection & Execution    │ │
 │  └───────────────────────────────────┘ │
@@ -151,7 +151,7 @@ WATSONX_PROJECT_ID=your_watsonx_project_id_here
 
 # Status Agent Model
 OLLAMA_API_BASE=http://127.0.0.1:11434
-STATUS_MODEL=ollama:granite4:small-h
+STATUS_MODEL=ollama:granite4.2:8b
 
 # Server Configuration
 STATUS_HOST=127.0.0.1
@@ -539,7 +539,7 @@ mypy src/
 | `WATSONX_URL` | Watsonx API endpoint | Yes | - |
 | `WATSONX_APIKEY` | Watsonx API key | Yes | - |
 | `WATSONX_PROJECT_ID` | Watsonx project ID | Yes | - |
-| `STATUS_MODEL` | BeeAI provider-qualified model | No | ollama:granite4:small-h |
+| `STATUS_MODEL` | BeeAI provider-qualified model | No | ollama:granite4.2:8b |
 | `STATUS_HOST` | Server host | No | 127.0.0.1 |
 | `STATUS_PORT` | Server port | No | 8002 |
 
