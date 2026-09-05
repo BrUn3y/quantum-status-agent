@@ -256,7 +256,7 @@ OUTPUT:
                 )
             
             # Use token directly without requiring saved account
-            service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+            service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
             
             # Collect information for each job separately
             jobs_data = []

@@ -49,7 +49,7 @@ class IBMQuantumInfoTool(Tool[QuantumInfoInput]):
                 )
             
             # Use token directly without requiring saved account
-            service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+            service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
             
             # Get specific backend
             try:

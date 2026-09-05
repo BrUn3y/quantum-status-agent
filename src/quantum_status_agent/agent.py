@@ -242,6 +242,13 @@ REMEMBER: Your value is in providing REAL and UP-TO-DATE data from IBM Quantum, 
 """
 
 _JOB_ID_PATTERN = re.compile(r"\b[a-z0-9]{16,}\b", re.IGNORECASE)
+_BACKEND_NAME_PATTERN = re.compile(r"\bibm_[a-z0-9_]+\b", re.IGNORECASE)
+_BACKEND_LIST_PATTERN = re.compile(
+    r"\b(available|availability|quantum computers?|backends?|least busy|less busy|"
+    r"disponible\w*|computadoras? cu[aá]nticas?|menos ocupad\w*)\b",
+    re.IGNORECASE,
+)
+_HARDWARE_ONLY_PATTERN = re.compile(r"\b(real|hardware|f[ií]sic\w*)\b", re.IGNORECASE)
 
 # Agent details for AgentStack
 STATUS_AGENT_DETAIL = AgentDetail(
@@ -288,7 +295,7 @@ STATUS_AGENT_SKILLS = [
         description="Gets detailed technical information about specific backends (qubit properties, errors, topology).",
         tags=["Quantum Computing", "IBM Quantum", "Backend Info", "Technical Details"],
         examples=[
-            "Give me detailed information about ibm_brisbane",
+            "Give me detailed information about ibm_fez",
             "What are the properties of ibm_kingston?",
             "How many qubits does ibm_kyiv have?",
             "Show me the error rates of ibm_sherbrooke",
@@ -595,6 +602,33 @@ async def quantum_status_agent(
             yield AgentMessage(text=response)
         except Exception as error:
             yield AgentMessage(text=f"❌ Error querying job: {explain_error(error)}")
+        return
+
+    backend_names = list(dict.fromkeys(_BACKEND_NAME_PATTERN.findall(user_query)))
+    if len(backend_names) == 1:
+        backend_name = backend_names[0].lower()
+        yield trajectory.trajectory_metadata(
+            title="🔬 Querying backend details",
+            content=f"Retrieving live IBM Quantum data for `{backend_name}`...",
+        )
+        try:
+            tool_output = await IBMQuantumInfoTool().run({"backend_name": backend_name})
+            yield AgentMessage(text=tool_output.get_text_content())
+        except Exception as error:
+            yield AgentMessage(text=f"❌ Error querying backend: {explain_error(error)}")
+        return
+
+    if _BACKEND_LIST_PATTERN.search(user_query):
+        only_hardware = bool(_HARDWARE_ONLY_PATTERN.search(user_query))
+        yield trajectory.trajectory_metadata(
+            title="🔬 Querying available backends",
+            content="Retrieving the live IBM Quantum backend list...",
+        )
+        try:
+            tool_output = await IBMQuantumStatusTool().run({"only_hardware": only_hardware})
+            yield AgentMessage(text=tool_output.get_text_content())
+        except Exception as error:
+            yield AgentMessage(text=f"❌ Error querying available backends: {explain_error(error)}")
         return
     
     # Create the agent with instructions

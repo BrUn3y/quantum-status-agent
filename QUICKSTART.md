@@ -34,7 +34,7 @@ WATSONX_PROJECT_ID=your_project_id_here
 
 # Local Granite model
 OLLAMA_API_BASE=http://127.0.0.1:11434
-STATUS_MODEL=ollama:granite4:small-h
+STATUS_MODEL=ollama:granite4.2:8b
 STATUS_HOST=127.0.0.1
 STATUS_PORT=8002
 ```
@@ -174,7 +174,7 @@ uv sync --reinstall
 ### Watsonx API Errors
 - Verify your API key is correct
 - Check project ID matches your Watsonx project
-- For local inference, run `ollama pull granite4:small-h`
+- For local inference, run `ollama pull granite4.2:8b`
 - Check Watsonx service status
 
 ## 📚 What This Agent Does

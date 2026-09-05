@@ -16,7 +16,7 @@ if [ ! -f .env ]; then
     echo ""
     echo "Required credentials:"
     echo "  - QISKIT_IBM_TOKEN"
-    echo "  - Ollama with granite4:small-h"
+    echo "  - Ollama with granite4.2:8b"
     echo ""
     exit 1
 fi
@@ -31,7 +31,7 @@ if [ -z "$QISKIT_IBM_TOKEN" ]; then
 fi
 
 echo "✅ Environment variables loaded"
-echo "🤖 Model: Granite 4 Small H (Ollama)"
+echo "🤖 Model: Granite 4.2 8B (Ollama)"
 echo ""
 
 # Start the agent with uv
