@@ -12,6 +12,7 @@ dependencies = [
     "qiskit-ibm-runtime>=0.20.0",
     "python-dotenv>=1.0.0",
     "matplotlib>=3.7.0",
+    "rustworkx>=0.15.0",
 ]
 
 [tool.ruff]
