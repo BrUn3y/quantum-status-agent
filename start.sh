@@ -15,9 +15,8 @@ if [ ! -f .env ]; then
     echo "✅ .env file created. Please edit it with your credentials."
     echo ""
     echo "Required credentials:"
-    echo "  - IBM_QUANTUM_TOKEN"
-    echo "  - WATSONX_APIKEY"
-    echo "  - WATSONX_PROJECT_ID"
+    echo "  - QISKIT_IBM_TOKEN"
+    echo "  - Ollama with granite4:small-h"
     echo ""
     exit 1
 fi
@@ -26,22 +25,13 @@ fi
 export $(cat .env | grep -v '^#' | xargs)
 
 # Check required environment variables
-if [ -z "$IBM_QUANTUM_TOKEN" ]; then
-    echo "❌ Error: IBM_QUANTUM_TOKEN not set in .env"
-    exit 1
-fi
-
-if [ -z "$WATSONX_APIKEY" ]; then
-    echo "❌ Error: WATSONX_APIKEY not set in .env"
-    exit 1
-fi
-
-if [ -z "$WATSONX_PROJECT_ID" ]; then
-    echo "❌ Error: WATSONX_PROJECT_ID not set in .env"
+if [ -z "$QISKIT_IBM_TOKEN" ]; then
+    echo "❌ Error: QISKIT_IBM_TOKEN not set in .env"
     exit 1
 fi
 
 echo "✅ Environment variables loaded"
+echo "🤖 Model: Granite 4 Small H (Ollama)"
 echo ""
 
 # Start the agent with uv
