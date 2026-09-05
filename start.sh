@@ -16,8 +16,7 @@ if [ ! -f .env ]; then
     echo ""
     echo "Required credentials:"
     echo "  - QISKIT_IBM_TOKEN"
-    echo "  - WATSONX_API_KEY"
-    echo "  - WATSONX_PROJECT_ID"
+    echo "  - Ollama with granite4.2:8b"
     echo ""
     exit 1
 fi
@@ -31,17 +30,8 @@ if [ -z "$QISKIT_IBM_TOKEN" ]; then
     exit 1
 fi
 
-if [ -z "$WATSONX_API_KEY" ]; then
-    echo "❌ Error: WATSONX_API_KEY not set in .env"
-    exit 1
-fi
-
-if [ -z "$WATSONX_PROJECT_ID" ]; then
-    echo "❌ Error: WATSONX_PROJECT_ID not set in .env"
-    exit 1
-fi
-
 echo "✅ Environment variables loaded"
+echo "🤖 Model: Granite 4.2 8B (Ollama)"
 echo ""
 
 # Start the agent with uv

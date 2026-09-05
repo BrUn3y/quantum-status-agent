@@ -7,7 +7,7 @@ This agent is a specialist in:
 - Querying status and results of quantum jobs
 - Listing user's recent jobs
 
-Model: mistralai/mistral-small-3-1-24b-instruct-2503 (Watsonx)
+Model: configurable via STATUS_MODEL (Granite/Ollama or Watsonx)
 Port: 8002
 Type: AgentStack Server with A2A (ReActAgent with query tools)
 """
@@ -31,9 +31,10 @@ from agentstack_sdk.platform.file import File
 
 from beeai_framework.agents.react import ReActAgent
 from beeai_framework.agents.react.runners.default.prompts import SystemPromptTemplateInput
-from beeai_framework.backend import ChatModel
 from beeai_framework.memory import UnconstrainedMemory
 from beeai_framework.template import PromptTemplate
+
+from .model_config import create_chat_model, explain_error, model_name, run_agent_with_retries
 
 # Import query tools
 from .tools import (
@@ -240,6 +241,15 @@ ONLY QUERIES (ALWAYS WITH TOOLS):
 REMEMBER: Your value is in providing REAL and UP-TO-DATE data from IBM Quantum, not generic responses.
 """
 
+_JOB_ID_PATTERN = re.compile(r"\b[a-z0-9]{16,}\b", re.IGNORECASE)
+_BACKEND_NAME_PATTERN = re.compile(r"\bibm_[a-z0-9_]+\b", re.IGNORECASE)
+_BACKEND_LIST_PATTERN = re.compile(
+    r"\b(available|availability|quantum computers?|backends?|least busy|less busy|"
+    r"disponible\w*|computadoras? cu[aá]nticas?|menos ocupad\w*)\b",
+    re.IGNORECASE,
+)
+_HARDWARE_ONLY_PATTERN = re.compile(r"\b(real|hardware|f[ií]sic\w*)\b", re.IGNORECASE)
+
 # Agent details for AgentStack
 STATUS_AGENT_DETAIL = AgentDetail(
     user_greeting="📊 Hello! I'm the Quantum Status Agent. I query the status of IBM quantum computers, technical backend information, and quantum job results in real-time.",
@@ -285,7 +295,7 @@ STATUS_AGENT_SKILLS = [
         description="Gets detailed technical information about specific backends (qubit properties, errors, topology).",
         tags=["Quantum Computing", "IBM Quantum", "Backend Info", "Technical Details"],
         examples=[
-            "Give me detailed information about ibm_brisbane",
+            "Give me detailed information about ibm_fez",
             "What are the properties of ibm_kingston?",
             "How many qubits does ibm_kyiv have?",
             "Show me the error rates of ibm_sherbrooke",
@@ -415,11 +425,8 @@ async def _upload_png_and_replace(text: str) -> str:
 server = Server()
 
 def create_status_agent():
-    """Creates an instance of the Quantum Status Agent with Mistral Small"""
-    # Configure Watsonx with Mistral Small
-    llm = ChatModel.from_name(
-        f"watsonx:{os.getenv('WATSONX_STATUS_MODEL', 'mistralai/mistral-small-3-1-24b-instruct-2503')}"
-    )
+    """Create the Quantum Status Agent with its configured chat model."""
+    llm = create_chat_model("STATUS")
     
     # Define the tools
     tools = [
@@ -575,6 +582,54 @@ async def quantum_status_agent(
         title="🔍 Analyzing status query",
         content=f"Processing user query:\n```\n{user_query[:200]}{'...' if len(user_query) > 200 else ''}\n```"
     )
+
+    job_ids = list(dict.fromkeys(_JOB_ID_PATTERN.findall(user_query)))
+    if len(job_ids) == 1:
+        job_id = job_ids[0]
+        yield trajectory.trajectory_metadata(
+            title="📊 Querying IBM Quantum job",
+            content=f"Retrieving current status for job `{job_id}`...",
+        )
+        try:
+            tool_output = await IBMQuantumJobTool().run({"job_id": job_id, "filter_status": "all"})
+            response = tool_output.get_text_content()
+            if "__QUANTUM_PNG__" in response:
+                response = await _upload_png_and_replace(response)
+            yield trajectory.trajectory_metadata(
+                title="✅ Job data obtained",
+                content="IBM Quantum returned the current job status and available results.",
+            )
+            yield AgentMessage(text=response)
+        except Exception as error:
+            yield AgentMessage(text=f"❌ Error querying job: {explain_error(error)}")
+        return
+
+    backend_names = list(dict.fromkeys(_BACKEND_NAME_PATTERN.findall(user_query)))
+    if len(backend_names) == 1:
+        backend_name = backend_names[0].lower()
+        yield trajectory.trajectory_metadata(
+            title="🔬 Querying backend details",
+            content=f"Retrieving live IBM Quantum data for `{backend_name}`...",
+        )
+        try:
+            tool_output = await IBMQuantumInfoTool().run({"backend_name": backend_name})
+            yield AgentMessage(text=tool_output.get_text_content())
+        except Exception as error:
+            yield AgentMessage(text=f"❌ Error querying backend: {explain_error(error)}")
+        return
+
+    if _BACKEND_LIST_PATTERN.search(user_query):
+        only_hardware = bool(_HARDWARE_ONLY_PATTERN.search(user_query))
+        yield trajectory.trajectory_metadata(
+            title="🔬 Querying available backends",
+            content="Retrieving the live IBM Quantum backend list...",
+        )
+        try:
+            tool_output = await IBMQuantumStatusTool().run({"only_hardware": only_hardware})
+            yield AgentMessage(text=tool_output.get_text_content())
+        except Exception as error:
+            yield AgentMessage(text=f"❌ Error querying available backends: {explain_error(error)}")
+        return
     
     # Create the agent with instructions
     agent = create_status_agent()
@@ -582,7 +637,7 @@ async def quantum_status_agent(
     # Step 2: Agent preparation
     yield trajectory.trajectory_metadata(
         title="🤖 Preparing query agent",
-        content=f"**Configuration:**\n- Model: Mistral Small 3.1\n- Tools: 4 (Status, Info, Job, Comparison)\n- Memory: Unlimited"
+        content=f"**Configuration:**\n- Model: {model_name('STATUS')}\n- Tools: 4 (Status, Info, Job, Comparison)\n- Memory: Unlimited"
     )
     
     # Build prompt with system instructions
@@ -596,7 +651,7 @@ async def quantum_status_agent(
     
     # Execute the agent
     try:
-        run_context = await agent.run(full_prompt)
+        run_context = await run_agent_with_retries(agent, full_prompt)
         
         # Update trajectory with progress
         yield trajectory.trajectory_metadata(
@@ -664,16 +719,16 @@ async def quantum_status_agent(
         
     except Exception as e:
         import traceback
-        error_msg = f"❌ Error in Status Agent: {str(e)}"
+        error_msg = f"❌ Error in Status Agent: {explain_error(e)}"
         error_details = f"\n\nError type: {type(e).__name__}\n"
-        error_details += f"Details: {str(e)}\n\n"
+        error_details += f"Details: {explain_error(e)}\n\n"
         error_details += "Traceback:\n"
         error_details += traceback.format_exc()
         
         # Error trajectory
         yield trajectory.trajectory_metadata(
             title="❌ Error detected",
-            content=f"**Type:** {type(e).__name__}\n**Message:** {str(e)}\n\nCheck logs for more details."
+            content=f"**Type:** {type(e).__name__}\n**Message:** {explain_error(e)}\n\nCheck logs for more details."
         )
         
         print("=" * 80)
@@ -692,7 +747,7 @@ def run():
     print("🚀 Starting Quantum Status Agent Server (AgentStack)")
     print("=" * 80)
     print(f"  📊 Agent: Quantum Status Agent")
-    print(f"  🤖 Model: {os.getenv('WATSONX_STATUS_MODEL', 'mistralai/mistral-small-3-1-24b-instruct-2503')}")
+    print(f"  🤖 Model: {model_name('STATUS')}")
     print(f"  🌐 Host: {host}")
     print(f"  🔌 Port: {port}")
     print(f"  🛠️  Tools: 4 (Status, Info, Job, Job Comparison)")

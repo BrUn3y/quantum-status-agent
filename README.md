@@ -4,7 +4,7 @@ Specialized agent for querying IBM Quantum backend status, technical information
 
 ## 🎯 Overview
 
-The Quantum Status Agent is a specialized AI agent that provides real-time information about IBM Quantum computers and quantum job execution. It uses the BeeAI framework with IBM Watsonx (Mistral Small model) and connects directly to IBM Quantum services.
+The Quantum Status Agent provides real-time IBM Quantum information using BeeAI with Granite 4.2 8B through Ollama (`ollama:granite4.2:8b`).
 
 ### Key Features
 
@@ -22,7 +22,7 @@ The Quantum Status Agent is a specialized AI agent that provides real-time infor
 │     Quantum Status Agent (Port 8002)    │
 │                                         │
 │  ┌───────────────────────────────────┐ │
-│  │   ReActAgent (Mistral Small)      │ │
+│  │   ReActAgent (Granite 4.2 8B)  │ │
 │  │   - Reasoning & Acting Pattern    │ │
 │  │   - Tool Selection & Execution    │ │
 │  └───────────────────────────────────┘ │
@@ -150,7 +150,8 @@ WATSONX_API_KEY=your_watsonx_api_key_here
 WATSONX_PROJECT_ID=your_watsonx_project_id_here
 
 # Status Agent Model
-WATSONX_STATUS_MODEL=mistralai/mistral-small-3-1-24b-instruct-2503
+OLLAMA_API_BASE=http://127.0.0.1:11434
+STATUS_MODEL=ollama:granite4.2:8b
 
 # Server Configuration
 STATUS_HOST=127.0.0.1
@@ -538,7 +539,7 @@ mypy src/
 | `WATSONX_API_URL` | Watsonx API endpoint | Yes | - |
 | `WATSONX_API_KEY` | Watsonx API key | Yes | - |
 | `WATSONX_PROJECT_ID` | Watsonx project ID | Yes | - |
-| `WATSONX_STATUS_MODEL` | LLM model for agent | No | mistral-small-3-1-24b-instruct-2503 |
+| `STATUS_MODEL` | BeeAI provider-qualified model | No | ollama:granite4.2:8b |
 | `STATUS_HOST` | Server host | No | 127.0.0.1 |
 | `STATUS_PORT` | Server port | No | 8002 |
 
@@ -580,10 +581,10 @@ python -c "from qiskit_ibm_runtime import QiskitRuntimeService; QiskitRuntimeSer
 
 This agent is part of the Quantum Computing Multi-Agent System. Here are the related repositories:
 
-- **[Quantum Computing Agent](https://github.ibm.com/Edgar-Castaneda/quantum-computing-agent)** - Circuit execution specialist
-- **[Quantum Status Agent](https://github.ibm.com/Edgar-Castaneda/quantum-status-agent)** - Status monitoring and job tracking (this repository)
-- **[Quantum Developer Agent](https://github.ibm.com/Edgar-Castaneda/quantum-developer-agent)** - Code generation and algorithm implementation
-- **[Quantum Operations Agent](https://github.ibm.com/Edgar-Castaneda/quantum-lab-agent)** - Main orchestrator coordinating all agents
+- **[Quantum Computing Agent](https://github.com/BrUn3y/quantum-computing-agent)** - Circuit execution specialist
+- **[Quantum Status Agent](https://github.com/BrUn3y/quantum-status-agent)** - Status monitoring and job tracking (this repository)
+- **[Quantum Developer Agent](https://github.com/BrUn3y/quantum-developer-agent)** - Code generation and algorithm implementation
+- **[Quantum Operations Agent](https://github.com/BrUn3y/quantum-lab-agent)** - Main orchestrator coordinating all agents
 
 ## 📚 Additional Resources
 
