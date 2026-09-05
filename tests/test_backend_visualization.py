@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 from qiskit.transpiler import CouplingMap
 
-from quantum_status_agent.agent import _create_backend_canvas
+from quantum_status_agent.agent import _create_backend_canvas, _create_job_results_canvas
 from quantum_status_agent.backend_visualization import (
     BACKEND_CANVAS_MARKER,
     canvas_marker,
@@ -63,6 +63,14 @@ class BackendVisualizationTests(unittest.TestCase):
     def test_marker_round_trip(self):
         marker = canvas_marker("/tmp/quantum_lab_pngs/example.png")
         self.assertEqual(BACKEND_CANVAS_MARKER.search(marker).group(1), "/tmp/quantum_lab_pngs/example.png")
+
+    def test_single_job_histogram_creates_canvas_with_local_query_time(self):
+        artifact = _create_job_results_canvas(
+            "![Job Results](agentstack://12345678-1234-1234-1234-123456789abc)",
+            "test-job",
+        )
+        self.assertEqual(artifact.name, "Job test-job results")
+        self.assertIn("Consulted locally:", artifact.parts[0].root.text)
 
 
 if __name__ == "__main__":
