@@ -11,6 +11,7 @@ The Quantum Status Agent provides real-time IBM Quantum information using BeeAI 
 - 🔬 **Backend Status Queries**: Lists all available quantum computers with operational status
 - ⚛️ **Technical Information**: Detailed backend properties (qubits, errors, topology)
 - 🗺️ **Backend Canvas**: Live chip topology, readout errors, queue, calibration, and coherence summary
+- 📈 **Job Results Canvas**: Opens freshly retrieved measurement histograms with the local query timestamp
 - 📊 **Job Status & Results**: Queries individual job status and measurement results
 - 🔄 **Job Comparison**: Side-by-side comparison of multiple quantum jobs
 - 🖼️ **Visual Histograms**: Automatic generation of result visualizations
