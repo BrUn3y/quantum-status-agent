@@ -10,6 +10,7 @@ The Quantum Status Agent provides real-time IBM Quantum information using BeeAI 
 
 - 🔬 **Backend Status Queries**: Lists all available quantum computers with operational status
 - ⚛️ **Technical Information**: Detailed backend properties (qubits, errors, topology)
+- 🗺️ **Backend Canvas**: Live chip topology, readout errors, queue, calibration, and coherence summary
 - 📊 **Job Status & Results**: Queries individual job status and measurement results
 - 🔄 **Job Comparison**: Side-by-side comparison of multiple quantum jobs
 - 🖼️ **Visual Histograms**: Automatic generation of result visualizations
@@ -235,9 +236,12 @@ Gets detailed technical information about a specific backend.
 **Output:**
 - Qubit properties (T1, T2, frequency)
 - Quantum gate errors
-- Connectivity topology
+- Connectivity topology rendered as an Agent Stack Canvas artifact
+- Visual health summary with queue, calibration, readout error, two-qubit error, T1, and T2 medians
 - Supported operations
 - Processor configuration
+
+Canvas is generated only when the request names exactly one `ibm_*` backend. Backend lists and job queries remain text responses.
 
 ### 3. IBM Quantum Job Tool
 
